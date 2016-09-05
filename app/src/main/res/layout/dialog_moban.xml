@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|bottom">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tips_popup_win_bg"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="雷们猴"
+        android:layout_marginBottom="100dp"/>
+
+</LinearLayout>

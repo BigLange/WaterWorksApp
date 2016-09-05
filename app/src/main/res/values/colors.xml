@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorBlack">#000000</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorGray">#eaeaea</color>
+    <color name="colorGray_3">#333333</color>
+    <color name="colorGray_6">#666666</color>
+    <color name="colorGray_9">#999999</color>
+    <color name="app_primary_color">#61b1fb</color>
+    <color name="app_primary_color_dark">#3f5c77</color>
+    <color name="data_chart_colour_1">#e12c08</color>
+    <color name="data_chart_colour_2">#e10816</color>
+    <color name="data_chart_colour_3">#f45906</color>
+    <color name="data_chart_colour_4">#065df4</color>
+</resources>

@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">黄浦江水厂</string>
+    <string name="WelcomeActivity_name">欢迎界面</string>
+    <string name="SelectOperationActivity_name">选择操作界面</string>
+    <string name="SelectEquipmentActivity_name">选择设备界面</string>
+    <string name="EquipmentInformationActivity_name">设备信息界面</string>
+    <string name="ImageSelectActivity_name">图片选择界面</string>
+    <string name="ImagePreview_name">图片预览界面</string>
+    <string name="LoginActivity_name">登录界面</string>
+
+    <!--login Activity String-->
+    <string name="userName_hint_value">请输入账号</string>
+    <string name="passWord_hint_value">请输入密码</string>
+    <string name="is_save_LoginMsg">是否保存登录信息</string>
+    <string name="login_btn_value">登录</string>
+    <!--login Activity String-->
+
+    <!--Select Operation Activity String-->
+    <string name="select_operation_title">黄浦江水厂</string>
+    <!--Select Operation Activity String-->
+
+    <!--SelectEquipment Activity String-->
+    <string name="select_equipment_title">选择巡检设备</string>
+    <!--SelectEquipment Activity String-->
+
+
+    <!--Equipment Information Activity-->
+    <string name="equipment_information_title">设备信息上报</string>
+    <string name="equipment_information_string">设备信息</string>
+    <string name="equipment_information_run_state">运行状态:</string>
+    <string name="equipment_information_Chart">温湿度图表</string>
+    <string name="equipment_information_temperature_1">温度信息1</string>
+    <string name="equipment_information_temperature_2">温度信息2</string>
+    <string name="equipment_information_temperature_3">温度信息3</string>
+    <string name="equipment_information_temperature_humidity">温湿度传感器</string>
+    <string name="equipment_information_error_msg_hint">请写入设备异常详细信息</string>
+    <string name="equipment_information_submit_btn_value">提交</string>
+    <!--Equipment Information Activity-->
+
+
+    <!--Select Personnel Activity String-->
+    <string name="select_personnel_title_value">选择操作人</string>
+    <string name="select_nfc_title_value">NFC测试</string>
+    <string name="select_nfc_Value">正在等待NFC</string>
+    <!--Select Personnel Activity String-->
+
+</resources>

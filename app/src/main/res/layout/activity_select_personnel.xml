@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context="com.example.think.waterworksapp.SelectPersonnelActivity">
+
+    <com.example.think.waterworksapp.base_view.headView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:text="@string/select_nfc_title_value"></com.example.think.waterworksapp.base_view.headView>
+
+
+    <!--<ListView-->
+        <!--android:id="@+id/class_staff_list"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginLeft="1dp"-->
+        <!--android:dividerHeight="1dp"-->
+        <!--android:divider="#fff">-->
+
+    <!--</ListView>-->
+
+    <TextView
+        android:id="@+id/nfc_data_show_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_nfc_Value"
+        />
+
+</LinearLayout>

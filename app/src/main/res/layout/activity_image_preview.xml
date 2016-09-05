@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fa000000"
+    tools:context="ImagePreview">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pre_image_show_viewPage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true">
+
+    </android.support.v4.view.ViewPager>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#60000000">
+
+        <TextView
+            android:id="@+id/pre_image_number_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="3dp"
+            android:text="3/4"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/pre_image_delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="#FE4D2C"
+            android:padding="10dp"
+            android:text="删除当前图片"
+            android:textColor="#fff" />
+    </RelativeLayout>
+
+</RelativeLayout>

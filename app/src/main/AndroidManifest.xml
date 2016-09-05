@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.think.waterworksapp">
+
+    <!-- 拍照的权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- SD卡写入权限， -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- SD卡读取权限， -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
+    <uses-permission android:name="android.permission.NFC" />
+
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
+
+    <application
+        android:name=".application.MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/app_logo"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".WelcomeActivity"
+            android:label="@string/WelcomeActivity_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--<intent-filter>-->
+                <!--<action android:name="android.nfc.action.TECH_DISCOVERED" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity android:name=".SelectOperationActivity"
+            android:label="@string/SelectOperationActivity_name"/>
+        <activity android:name=".SelectEquipmentActivity"
+            android:label="@string/SelectEquipmentActivity_name"/>
+        <activity android:name=".EquipmentInformationActivity"
+            android:label="@string/EquipmentInformationActivity_name">
+            <!--<meta-data-->
+                <!--android:name="android.nfc.action.TECH_DISCOVERED"-->
+                <!--android:resource="@xml/nfc_tech_filter" />-->
+        </activity>
+        <activity android:name=".ImageSelectActivity"
+            android:label="@string/ImageSelectActivity_name"/>
+        <activity android:name=".ImagePreview"
+            android:label="@string/ImagePreview_name"/>
+        <activity android:name=".SelectPersonnelActivity">
+
+        </activity>
+        <activity android:name=".LoginActivity"
+            android:label="@string/LoginActivity_name"></activity>
+    </application>
+
+</manifest>

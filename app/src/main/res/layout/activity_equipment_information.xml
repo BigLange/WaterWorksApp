@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:orientation="vertical"
+    tools:context="com.example.think.waterworksapp.EquipmentInformationActivity">
+
+    <com.example.think.waterworksapp.base_view.headView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:text="@string/equipment_information_title">
+
+    </com.example.think.waterworksapp.base_view.headView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/data_item_back"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="@string/equipment_information_string"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/equipment_information_run_state"
+                    android:textColor="@color/colorGray_6" />
+
+                <TextView
+                    android:id="@+id/equipment_run_state_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
+                    android:text="开启"
+                    android:textColor="@color/colorGray_6" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/data_item_back"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="@string/equipment_information_Chart"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@color/data_chart_colour_1"
+                    android:padding="10dp"></View>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/equipment_information_temperature_1" />
+
+                <View
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@color/data_chart_colour_2"
+                    android:padding="10dp"></View>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/equipment_information_temperature_2" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@color/data_chart_colour_3"
+                    android:padding="10dp"></View>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/equipment_information_temperature_3" />
+
+                <View
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@color/data_chart_colour_4"
+                    android:padding="10dp"></View>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/equipment_information_temperature_humidity" />
+
+            </LinearLayout>
+
+
+            <lecho.lib.hellocharts.view.LineChartView
+                android:id="@+id/line_chart_view"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginLeft="-10dp"
+                android:background="#ffffff" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/data_item_back"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="@string/equipment_information_title"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/equipment_run_state_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <EditText
+                android:id="@+id/equipment_error_msg_submit_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_margin="10dp"
+                android:enabled="true"
+                android:gravity="top"
+                android:hint="@string/equipment_information_error_msg_hint"
+                android:inputType="textMultiLine"
+                android:textSize="16sp"
+                android:minLines="8"
+                android:maxLines="8"
+                android:maxLength="300"
+                android:scrollbars="vertical"
+                android:background="@drawable/equipment_edit_error_submit_back"
+                >
+            </EditText>
+
+
+            <GridView
+                android:id="@+id/equipment_error_img_submit_grid"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="4"
+                android:horizontalSpacing="3dp"
+                android:verticalSpacing="3dp"></GridView>
+
+            <Button
+                android:id="@+id/equipment_information_submit_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:background="@drawable/equipment_information_submit_btn_back"
+                android:text="@string/equipment_information_submit_btn_value"/>
+
+            <View
+                android:id="@+id/equipment_information_popupWindow_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

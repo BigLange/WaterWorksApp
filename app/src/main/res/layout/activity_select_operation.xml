@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context="com.example.think.waterworksapp.SelectOperationActivity">
+
+    <com.example.think.waterworksapp.base_view.headView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:text="@string/select_operation_title"></com.example.think.waterworksapp.base_view.headView>
+
+
+    <com.example.think.waterworksapp.base_view.PictureCarouselView
+        android:id="@+id/picture_carouse_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <GridView
+        android:id="@+id/operation_btn_gridView"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:numColumns="3"
+        android:layout_weight="1">
+
+    </GridView>
+
+</LinearLayout>

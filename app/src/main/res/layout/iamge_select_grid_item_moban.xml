@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/img_select_grid_item_img"
+        android:src="@drawable/pictures_no"
+        />
+
+    <ImageButton
+        android:id="@+id/img_select_xuanze_btn"
+        android:clickable="false"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:scaleType="centerCrop"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="3dp"
+        android:background="@null"
+        android:src="@drawable/picture_unselected"/>
+
+</RelativeLayout>
