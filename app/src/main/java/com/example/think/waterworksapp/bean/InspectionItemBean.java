@@ -5,22 +5,24 @@ package com.example.think.waterworksapp.bean;
  */
 public class InspectionItemBean {
 
-    private int id;
+    private long id;
+    private String domainPath;
     private String position;
     private String item;//巡检项目
-    private String context;//巡检内容
     private String spotCheckMethod;//点检方法
     private String spotCheckTool;//点检工具
     private String spotCheckCategory;//点检类别
     private String standardContext;//标准内容
-    private int modelId;//设备模板ID
+    private long modelId;//设备模板ID
 
-    public int getId() {
-        return id;
+
+
+    public String getDomainPath() {
+        return domainPath;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setDomainPath(String domainPath) {
+        this.domainPath = domainPath;
     }
 
     public String getPosition() {
@@ -37,14 +39,6 @@ public class InspectionItemBean {
 
     public void setItem(String item) {
         this.item = item;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public void setContext(String context) {
-        this.context = context;
     }
 
     public String getSpotCheckMethod() {
@@ -79,11 +73,19 @@ public class InspectionItemBean {
         this.standardContext = standardContext;
     }
 
-    public int getModelId() {
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getModelId() {
         return modelId;
     }
 
-    public void setModelId(int modelId) {
+    public void setModelId(long modelId) {
         this.modelId = modelId;
     }
 }

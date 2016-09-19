@@ -15,6 +15,8 @@ import com.example.think.waterworksapp.base_view.PictureCarouselView;
 import com.example.think.waterworksapp.bean.SelectOperationBtnBean;
 import com.example.think.waterworksapp.custom_view.UpperActivity;
 import com.example.think.waterworksapp.dialog.DialogManager;
+import com.example.think.waterworksapp.dialog.LoginOutDialog;
+import com.example.think.waterworksapp.dialog.SimperDialog;
 import com.example.think.waterworksapp.model.GetTeamModel;
 import com.example.think.waterworksapp.model.LoginOutModel;
 import com.example.think.waterworksapp.utils.ToastUtils;
@@ -29,7 +31,13 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
     private GridView operationBtnGrid;
     private ArrayList<SelectOperationBtnBean> data;
     private String[] titles = {"设备巡检","传感检测","智能报警","保安巡检","生产通知","行政通知","浦沅信息","登出"};
+    private int[] icons = {R.drawable.select_operation_inspection_icon,R.drawable.select_operation_sensing_detection_icon,
+            R.drawable.select_operation_warning_icon,R.drawable.select_operation_security_staff_inspection,
+            R.drawable.select_operation_notification_icon,R.drawable.select_operation_administrative_notice_icon,
+            R.drawable.select_operation_puyuan_msg_icon,R.drawable.select_operation_login_out_icon,};
     private ArrayList<Integer> imgResourcesId;
+    private boolean isStopActivity = false;
+    private SimperDialog dialog;
 //    private DialogManager dialogManager;
 
 
@@ -38,7 +46,9 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
     protected void initView() {
         pictureCarouselView = findView(R.id.picture_carouse_view);
         operationBtnGrid = findView(R.id.operation_btn_gridView);
-        LoadOver();
+        dialog = new SimperDialog(this);
+        dialog.setContent("正在获取班组信息").showDialog();
+        getTeamMsg();
     }
 
     private void setValue(){
@@ -46,7 +56,7 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
         for (int i=0;i<titles.length;i++){
             SelectOperationBtnBean bean = new SelectOperationBtnBean();
             bean.setTitle(titles[i]);
-            bean.setImgResourcesId(R.drawable.waterworks);
+            bean.setImgResourcesId(icons[i]);
             data.add(bean);
         }
         imgResourcesId = new ArrayList<>();
@@ -54,13 +64,13 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
         imgResourcesId.add(R.drawable.notice_2);
         imgResourcesId.add(R.drawable.notice_3);
         imgResourcesId.add(R.drawable.notice_4);
+        pictureCarouselView.setImgResourcesId(imgResourcesId);
     }
 
     @Override
     protected void initEvent() {
         operationBtnGrid.setOnItemClickListener(this);
         pictureCarouselView.setListener(this);
-        pictureCarouselView.setImgResourcesId(imgResourcesId);
     }
 
     private void getTeamMsg(){
@@ -80,16 +90,17 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
                 startActivity(SelectEquipmentActivity.class);
                 break;
             case 7:
-                loginOut();
+                activeLoginOut();
+                break;
             default:
                 DialogManager dm = new DialogManager(this);
-                dm.showRecordingDialog("点击到其他东西啦");
+                dm.showRecordingDialog("该功能暂未开放，敬请期待！");
                 break;
         }
 
     }
 
-    private void loginOut(){
+    private void activeLoginOut(){
         LoginOutModel loginOutModel = new LoginOutModel(this, new LoginOutView() {
             @Override
             public void LoadOver(List<String> data) {
@@ -103,7 +114,7 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
             public void LoadError(String errorMsg) {
             }
         });
-//        loginOutModel.loginOut();
+        loginOutModel.loginOut();
         Intent intent = new Intent(this,LoginActivity.class);
         startActivity(intent);
         finish();
@@ -111,18 +122,20 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
 
     @Override
     protected void onStart() {
-        pictureCarouselView.startTimer();
+        if (isStopActivity)
+            pictureCarouselView.startTimer();
         super.onStart();
     }
 
     @Override
     protected void onStop() {
         pictureCarouselView.stopTimer();
+        isStopActivity = true;
         super.onStop();
     }
 
-    private void startActivity(Class<? extends Activity> loginActivityClass) {
-        Intent intent = new Intent(this,loginActivityClass);
+    private void startActivity(Class<? extends Activity> activityClass) {
+        Intent intent = new Intent(this,activityClass);
         startActivity(intent);
     }
 
@@ -145,6 +158,7 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
         setValue();
         SelectOperationGridAdapter adapter = new SelectOperationGridAdapter(this,-1,data);
         operationBtnGrid.setAdapter(adapter);
+        dialog.hideDialog();
     }
 
     @Override
@@ -153,5 +167,14 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
 //            dialogManager = new DialogManager(this);
 //        dialogManager.showRecordingDialog(errorMsg);
         ToastUtils.showToast(this,errorMsg);
+        dialog.hideDialog();
+        finish();
+    }
+
+    @Override
+    public void loginOut() {
+        dialog.hideDialog();
+        LoginOutDialog dialog = LoginOutDialog.getLoginOutDialog(this);
+        dialog.showDialog();
     }
 }

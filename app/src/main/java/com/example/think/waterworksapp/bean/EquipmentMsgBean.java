@@ -4,18 +4,32 @@ package com.example.think.waterworksapp.bean;
  * Created by Think on 2016/8/22.
  */
 public class EquipmentMsgBean {
+    private long domainId;
     private String domainPath;
-    private int id;
+    private long id;
     private String label;
-    private int gatewayId;
+    private long gatewayId;
     private String externalDevId;
-    private int modelId;
+    private long modelId;
+    private String manufacturer;
+    private long physicalDeviceId;
     private String createTime;
     private String updateTime;
+    private String category;
+    private DeviceValueBean values;
+    private String categoryValues;
+    private int maxInstanceNo;
     private String managedStatus;
     private String operationStatus;
     private String activeTime;
-    private RfIdBean rfIdBean;
+
+    public long getDomainId() {
+        return domainId;
+    }
+
+    public void setDomainId(long domainId) {
+        this.domainId = domainId;
+    }
 
     public String getDomainPath() {
         return domainPath;
@@ -25,11 +39,11 @@ public class EquipmentMsgBean {
         this.domainPath = domainPath;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -41,11 +55,11 @@ public class EquipmentMsgBean {
         this.label = label;
     }
 
-    public int getGatewayId() {
+    public long getGatewayId() {
         return gatewayId;
     }
 
-    public void setGatewayId(int gatewayId) {
+    public void setGatewayId(long gatewayId) {
         this.gatewayId = gatewayId;
     }
 
@@ -57,12 +71,28 @@ public class EquipmentMsgBean {
         this.externalDevId = externalDevId;
     }
 
-    public int getModelId() {
+    public long getModelId() {
         return modelId;
     }
 
-    public void setModelId(int modelId) {
+    public void setModelId(long modelId) {
         this.modelId = modelId;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public long getPhysicalDeviceId() {
+        return physicalDeviceId;
+    }
+
+    public void setPhysicalDeviceId(long physicalDeviceId) {
+        this.physicalDeviceId = physicalDeviceId;
     }
 
     public String getCreateTime() {
@@ -79,6 +109,38 @@ public class EquipmentMsgBean {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public DeviceValueBean getValues() {
+        return values;
+    }
+
+    public void setValues(DeviceValueBean values) {
+        this.values = values;
+    }
+
+    public String getCategoryValues() {
+        return categoryValues;
+    }
+
+    public void setCategoryValues(String categoryValues) {
+        this.categoryValues = categoryValues;
+    }
+
+    public int getMaxInstanceNo() {
+        return maxInstanceNo;
+    }
+
+    public void setMaxInstanceNo(int maxInstanceNo) {
+        this.maxInstanceNo = maxInstanceNo;
     }
 
     public String getManagedStatus() {
@@ -103,13 +165,5 @@ public class EquipmentMsgBean {
 
     public void setActiveTime(String activeTime) {
         this.activeTime = activeTime;
-    }
-
-    public RfIdBean getRfIdBean() {
-        return rfIdBean;
-    }
-
-    public void setRfIdBean(RfIdBean rfIdBean) {
-        this.rfIdBean = rfIdBean;
     }
 }

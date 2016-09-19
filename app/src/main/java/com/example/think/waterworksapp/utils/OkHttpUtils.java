@@ -2,6 +2,7 @@ package com.example.think.waterworksapp.utils;
 
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
@@ -14,6 +15,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ import java.util.Map;
  * Created by Think on 2016/6/21.
  */
 public class OkHttpUtils {
-    private final  String PERECETION_URL = "https://iot.proudsmart.com/api/";
+    private final  String PERECETION_URL = "http://36.110.36.118:8081/api/";
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");//这个表示上传的类型为图片类型
     private OkHttpClient mOkHttpClient;
     private static OkHttpUtils httpUtils;
@@ -52,6 +54,12 @@ public class OkHttpUtils {
             builder.add(key,map.get(key).toString());
         }
         sendRequest(builder.build(),url,callback);
+    }
+
+    public void doPostAsyn(String url, String data,Callback callback){
+        url = mosaicUrl(url);
+        MediaType mediaType = MediaType.parse("raw");
+        sendRequest(RequestBody.create(mediaType, data),url,callback);
     }
 
     public void doPostAsynValueToHeader(String url, Map<String,Object> headMap,Callback callback){
@@ -96,10 +104,12 @@ public class OkHttpUtils {
 
 
     public void upLoadImg(String url, ArrayList<Bitmap> bitmaps,String upLoadImageKey
-            , Map<String,String> submitDta,Callback callback) {
+            , Map<String,Object> submitDta,Callback callback) {
+        url=PERECETION_URL+url;
         MultipartBuilder builder = new MultipartBuilder().type(MultipartBuilder.FORM);
         for (String key:submitDta.keySet()) {
-            builder.addFormDataPart(key, null, RequestBody.create(null, submitDta.get(key)));
+            Log.e("submit",key+":"+submitDta.get(key));
+            builder.addFormDataPart(key, null, RequestBody.create(null, submitDta.get(key)+""));
         }
         for (Bitmap bitmap : bitmaps) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -114,6 +124,7 @@ public class OkHttpUtils {
 
 
     private Call createCall(String url){
+        url = mosaicUrl(url);
         Request request = new Request.Builder().url(url).build();
         return mOkHttpClient.newCall(request);
     }

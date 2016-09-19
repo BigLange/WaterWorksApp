@@ -8,27 +8,29 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.think.waterworksapp.R;
-import com.example.think.waterworksapp.bean.EquipmentBeanTest;
+import com.example.think.waterworksapp.bean.DeviceDomainBean;
+import com.example.think.waterworksapp.bean.EquipmentMsgBean;
 
 import java.util.ArrayList;
+
 /**
- * Created by Think on 2016/8/15.
+ * Created by Think on 2016/9/7.
  */
-public class EquipmentAreaAdapter extends ArrayAdapter<EquipmentBeanTest> {
+public class DeviceAdapter extends ArrayAdapter<EquipmentMsgBean> {
 
     private final int LAYOUT_ID = R.layout.select_staff_time_moban;
     private final int TXT_ID = R.id.mrele_frag2_grid_item_btn;
-
     private Context context;
 
-    public EquipmentAreaAdapter(Context context, ArrayList<EquipmentBeanTest> data) {
-        super(context, -1, data);
+    public DeviceAdapter(Context context,ArrayList<EquipmentMsgBean> data) {
+        super(context, -1,data);
         this.context = context;
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        EquipmentBeanTest staffBean = getItem(position);
+        EquipmentMsgBean equipmentMsgBean = getItem(position);
         ViewHodel hodel;
         if (convertView==null){
             convertView = LayoutInflater.from(context).inflate(LAYOUT_ID,parent,false);
@@ -38,7 +40,7 @@ public class EquipmentAreaAdapter extends ArrayAdapter<EquipmentBeanTest> {
         }else{
             hodel = (ViewHodel)convertView.getTag();
         }
-        hodel.title.setText(staffBean.getTeamName());
+        hodel.title.setText(equipmentMsgBean.getLabel());
         return convertView;
     }
 

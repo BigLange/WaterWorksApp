@@ -56,8 +56,8 @@ public class LoginActivity extends UpperActivity implements View.OnFocusChangeLi
 
     @Override
     public void onClick(View view) {
-//        loginModel.loginInspect();
-        jumpIntent();
+        loginModel.loginInspect();
+//        jumpIntent();
     }
 
     @Override

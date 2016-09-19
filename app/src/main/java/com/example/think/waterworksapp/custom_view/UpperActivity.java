@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.think.waterworksapp.utils.ActivityPreservationUtils;
+
 
 /**
  * Created by Think on 2016/8/11.
@@ -14,10 +16,16 @@ public abstract class UpperActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+        ActivityPreservationUtils.setActivity(this);
         initView();
         initEvent();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityPreservationUtils.cleanActivity(this);
+    }
 
     protected abstract void initView();
 
@@ -28,5 +36,6 @@ public abstract class UpperActivity extends Activity {
     protected <T extends View>  T findView(int id){
         return (T) findViewById(id);
     }
+
 
 }

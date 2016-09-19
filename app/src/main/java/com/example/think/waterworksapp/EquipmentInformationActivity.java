@@ -26,18 +26,28 @@ import android.widget.Toast;
 import com.example.think.waterworksapp.adapter.DividerItemDecoration;
 import com.example.think.waterworksapp.adapter.EquipmentSubmitAdapter;
 import com.example.think.waterworksapp.adapter.ImgUpLoadAdapter;
+import com.example.think.waterworksapp.adapter.MonitorPointRecyclerAdapter;
 import com.example.think.waterworksapp.base_intface.EquipmentMsgSubmitView;
+import com.example.think.waterworksapp.base_intface.GetAcquisitionSensorDataView;
+import com.example.think.waterworksapp.base_intface.GetAcquisitionSensorView;
 import com.example.think.waterworksapp.base_intface.GetInspectionItemView;
 import com.example.think.waterworksapp.base_intface.GetMonitoringPointDataView;
+import com.example.think.waterworksapp.base_view.FullyLinearLayoutManager;
+import com.example.think.waterworksapp.bean.AcquisitionSensorBean;
+import com.example.think.waterworksapp.bean.AcquisitionSensorDataBean;
 import com.example.think.waterworksapp.bean.InspectionItemBean;
 import com.example.think.waterworksapp.bean.MonitoringPointDataBean;
 import com.example.think.waterworksapp.custom_view.UpperActivity;
 import com.example.think.waterworksapp.dialog.DialogManager;
+import com.example.think.waterworksapp.dialog.LoginOutDialog;
 import com.example.think.waterworksapp.dialog.SimperDialog;
 import com.example.think.waterworksapp.model.EquipmentMsgSubmitModel;
+import com.example.think.waterworksapp.model.GetAcquisitionSensorDataModel;
+import com.example.think.waterworksapp.model.GetAcquisitionSensorModel;
 import com.example.think.waterworksapp.model.GetInspectionItemModel;
 import com.example.think.waterworksapp.model.GetMonitoringPointDataModel;
 import com.example.think.waterworksapp.popup_window.AddImagePopupWindow;
+import com.example.think.waterworksapp.utils.ActivityPreservationUtils;
 import com.example.think.waterworksapp.utils.NfcUtils;
 import com.example.think.waterworksapp.utils.SetListViewAndGridViewHeightUtils;
 import com.example.think.waterworksapp.utils.ToastUtils;
@@ -49,6 +59,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +77,8 @@ import lecho.lib.hellocharts.view.LineChartView;
 public class EquipmentInformationActivity extends UpperActivity
         implements ImgUpLoadAdapter.AddImageViewBtnClickListener,AdapterView.OnItemClickListener
                     ,AddImagePopupWindow.AddImageItemClickListener ,GetInspectionItemView,GetMonitoringPointDataView
-                        ,View.OnClickListener,EquipmentMsgSubmitView,NfcUtils.GetDeviceIdListener,DialogInterface.OnDismissListener{
+                        ,View.OnClickListener,EquipmentMsgSubmitView,NfcUtils.GetDeviceIdListener,DialogInterface.OnDismissListener
+                        ,GetAcquisitionSensorView,GetAcquisitionSensorDataView{
 
     public static final String CURRENT_IMAGE_LIST_LENGTH = "current image list size";
 
@@ -78,7 +90,8 @@ public class EquipmentInformationActivity extends UpperActivity
     private final int IMGPRE = 333;
 
     private RecyclerView equipment_run_state_submit_recycler;
-    private TextView equipmentRunStateTxt;
+    private RecyclerView equipment_data_show_recycler;
+//    private TextView equipmentRunStateTxt;
     private LineChartView line_chart_view;
     private EditText errorMsgSubmitEdit;
     private GridView errorImgSubmitGrid;
@@ -87,29 +100,30 @@ public class EquipmentInformationActivity extends UpperActivity
 //    private DialogManager dialogManager;
     private SimperDialog dialog;
 
+    private ArrayList<AcquisitionSensorBean> acquisitionSensorArr = new ArrayList<>();
+    private HashMap<Long,ArrayList<AcquisitionSensorDataBean>> acquisitionSensorDataMap = new HashMap<>();
+    private HashMap<Long,HashMap<Long,ArrayList<MonitoringPointDataBean>>> monitorPointDataMap = new HashMap<>();
+    private ArrayList<InspectionItemBean> inspectionItems;
     private EquipmentSubmitAdapter equipmentSubmitAdapter;
     private ArrayAdapter<String> imgUpLoadAdapter;
     private AddImagePopupWindow addImagePopupWindow;
     private ArrayList<String> imgUrls = new ArrayList<>();
-    private ArrayList<String> submitTitle;
     private HashMap<String,Object> bodyMap;
     private NfcUtils nfcUtils;
 
 
-    private final boolean hasLabelsOnlyForSelected = true;
-    private final boolean HasLabels = false;
+
     private boolean ifFinsh = false;
     private boolean ifGetDevice = false;
+    private boolean ifContactNfc = false;
     private boolean ifReadDeviceIdSuccess = false;
+    private long deviceId;
+    private long modelId;
+    private int acquisitionSensorSize = -1;
+    private int currentMonitorindex = 0;
 
-    String[] date = {"1", "2", "3", "4", "5", "6", "7"};//X轴的标注
-    private List<PointValue> mPointValues = new ArrayList<PointValue>();
-    private List<PointValue> mPointValues2 = new ArrayList<PointValue>();
-    private List<PointValue> mPointValues3 = new ArrayList<PointValue>();
-    private List<PointValue> mPointValues4 = new ArrayList<PointValue>();
-    private List<PointValue> mPointValues5 = new ArrayList<PointValue>();
-    private List<PointValue> mPointValues6 = new ArrayList<PointValue>();
-    private List<AxisValue> mAxisXValues = new ArrayList<AxisValue>();
+
+
 
 
     @Override
@@ -118,7 +132,7 @@ public class EquipmentInformationActivity extends UpperActivity
         nfcUtils = new NfcUtils(this,this);
         if (dialog == null)
             dialog = new SimperDialog(this);
-        dialog.setTitle("正在获取设备ID").showDialog();
+        dialog.setContent("正在获取设备ID").showDialog();
     }
 
     @Override
@@ -126,6 +140,9 @@ public class EquipmentInformationActivity extends UpperActivity
         super.onNewIntent(intent);
         String action = intent.getAction();
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
+            if (ifContactNfc)
+                return;
+            ifContactNfc = true;
             nfcUtils.processNfcConnectedIntent(intent);
             return;
         }
@@ -139,25 +156,20 @@ public class EquipmentInformationActivity extends UpperActivity
         super.onDestroy();
     }
 
-    private void setValue(){
-        submitTitle = new ArrayList<>();
-        submitTitle.add("设备运行无异常、异味。");
-        submitTitle.add("闸刀、开关在正确位置。");
-        submitTitle.add("仪表读数在正常范围内，无大波动");
+    private void initValue(){
         bodyMap = new HashMap<>();
         Intent intent = getIntent();
-        bodyMap.put(GetMonitoringPointDataModel.NODE_IDS_KEY,intent.getStringArrayExtra(GetMonitoringPointDataModel.NODE_IDS_KEY));
-        bodyMap.put(GetMonitoringPointDataModel.KPI_CODES_key,intent.getStringArrayExtra(GetMonitoringPointDataModel.KPI_CODES_key));
-        bodyMap.put(GetMonitoringPointDataModel.IS_REALTIMEDATA_key,intent.getStringArrayExtra(GetMonitoringPointDataModel.IS_REALTIMEDATA_key));
-        bodyMap.put(GetMonitoringPointDataModel.TIME_PERIOD_key,intent.getStringArrayExtra(GetMonitoringPointDataModel.TIME_PERIOD_key));
-        getData();
+        deviceId = intent.getLongExtra(SelectEquipmentActivity.DEVICE_ID,-1);
+        modelId = intent.getLongExtra(SelectEquipmentActivity.MODEL_ID,-1);
     }
 
     private void getData(){
-        GetInspectionItemModel getInspectionItemModel = new GetInspectionItemModel(this,this);
-//        getInspectionItemModel.getInspectionItem();
+        GetAcquisitionSensorModel getAcquisitionSensorModel = new GetAcquisitionSensorModel(this,this);
+        getAcquisitionSensorModel.getAcquisitionSensor(deviceId);
 
-        GetMonitoringPointDataModel getMonitoringPointDataModel = new GetMonitoringPointDataModel(this,this);
+        GetInspectionItemModel getInspectionItemModel = new GetInspectionItemModel(this,this);
+        getInspectionItemModel.getInspectionItem(modelId);
+
 //        getMonitoringPointDataModel.getMonitoringPointData(bodyMap);
     }
 
@@ -167,10 +179,11 @@ public class EquipmentInformationActivity extends UpperActivity
     protected void initView() {
 //        initRecycler();
 //        initChart();
+        initValue();
         initImgUpLoad();
         initPopupWindow();
         errorMsgSubmitEdit = findView(R.id.equipment_error_msg_submit_edit);
-        equipmentRunStateTxt = findView(R.id.equipment_run_state_value);
+//        equipmentRunStateTxt = findView(R.id.equipment_run_state_value);
         submitBtn = findView(R.id.equipment_information_submit_btn);
         popupWindowBottom = findView(R.id.equipment_information_popupWindow_bottom);
     }
@@ -217,23 +230,17 @@ public class EquipmentInformationActivity extends UpperActivity
         SetListViewAndGridViewHeightUtils.setGridViewHeight(errorImgSubmitGrid);
     }
 
-    /**
-     * 初始化图表
-     */
-    private void initChart() {
-        line_chart_view = findView(R.id.line_chart_view);
-        getAxisXLables();//获取x轴的标注
-        getAxisPoints();//获取坐标点
-        initLineChart();//初始化
-    }
-
     private void initRecycler(){
-        setValue();
         equipment_run_state_submit_recycler = findView(R.id.equipment_run_state_submit);
+        //设置布局管理器
         equipment_run_state_submit_recycler.setLayoutManager(new LinearLayoutManager(this));
+        //添加分割线
         equipment_run_state_submit_recycler.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL_LIST));
-        equipmentSubmitAdapter = new EquipmentSubmitAdapter(this,submitTitle);
-        equipment_run_state_submit_recycler.setAdapter(equipmentSubmitAdapter);
+
+
+        equipment_data_show_recycler = findView(R.id.equipment_data_show_recycler);
+        equipment_data_show_recycler.setLayoutManager(new FullyLinearLayoutManager(this));
+//        equipment_data_show_recycler.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL_LIST));
     }
 
 
@@ -245,153 +252,9 @@ public class EquipmentInformationActivity extends UpperActivity
     }
 
 
-    private void initLineChart() {
-        Resources resources = getResources();
-        Line line = new Line(mPointValues).setColor(resources.getColor(R.color.data_chart_colour_1)).setStrokeWidth(0);  //折线的颜色（绿色）
-        List<Line> lines = new ArrayList<Line>();
-        line.setShape(ValueShape.CIRCLE);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
-        line.setCubic(true);//曲线是否平滑，即是曲线还是折线
-        line.setFilled(true);//是否填充曲线的面积
-        line.setHasLabels(HasLabels);//曲线的数据坐标是否加上备注
-        line.setHasLabelsOnlyForSelected(hasLabelsOnlyForSelected);//点击数据坐标提示数据（设置了这个line.setHasLabels(true);就无效）
-        line.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
-//        line.setHasPoints(true);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
-        line.setPointRadius(1);
-
-        Line line2 = new Line(mPointValues2).setColor(resources.getColor(R.color.data_chart_colour_2)).setStrokeWidth(0);  //折线的颜色（红蛇）
-        line2.setShape(ValueShape.DIAMOND);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
-        line2.setCubic(true);//曲线是否平滑，即是曲线还是折线
-        line2.setFilled(true);//是否填充曲线的面积
-        line2.setHasLabels(HasLabels);//曲线的数据坐标是否加上备注
-        line2.setHasLabelsOnlyForSelected(hasLabelsOnlyForSelected);//点击数据坐标提示数据（设置了这个line.setHasLabels(true);就无效）
-        line2.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
-//        line.setHasPoints(true);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
-        line2.setPointRadius(1);
-
-        Line line3 = new Line(mPointValues3).setColor(resources.getColor(R.color.data_chart_colour_3)).setStrokeWidth(0);
-        line3.setShape(ValueShape.DIAMOND);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
-        line3.setCubic(true);//曲线是否平滑，即是曲线还是折线
-        line3.setFilled(true);//是否填充曲线的面积
-        line3.setHasLabels(HasLabels);//曲线的数据坐标是否加上备注
-        line3.setHasLabelsOnlyForSelected(hasLabelsOnlyForSelected);//点击数据坐标提示数据（设置了这个line.setHasLabels(true);就无效）
-        line3.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
-//        line.setHasPoints(true);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
-        line3.setPointRadius(1);
-
-        Line line4 = new Line(mPointValues4).setColor(resources.getColor(R.color.data_chart_colour_4)).setStrokeWidth(0);
-        line4.setShape(ValueShape.DIAMOND);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
-        line4.setCubic(true);//曲线是否平滑，即是曲线还是折线
-        line4.setFilled(true);//是否填充曲线的面积
-        line4.setHasLabels(HasLabels);//曲线的数据坐标是否加上备注
-        line4.setHasLabelsOnlyForSelected(hasLabelsOnlyForSelected);//点击数据坐标提示数据（设置了这个line.setHasLabels(true);就无效）
-        line4.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
-//        line.setHasPoints(true);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
-        line4.setPointRadius(1);
-
-        Line line5 = new Line(mPointValues5).setColor(Color.WHITE).setStrokeWidth(0);
-        line5.setShape(ValueShape.DIAMOND);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
-        line5.setCubic(true);//曲线是否平滑，即是曲线还是折线
-        line5.setFilled(false);//是否填充曲线的面积
-        line5.setHasLabels(false);//曲线的数据坐标是否加上备注
-        line5.setHasLabelsOnlyForSelected(false);//点击数据坐标提示数据（设置了这个line.setHasLabels(true);就无效）
-        line5.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
-//        line.setHasPoints(true);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
-        line5.setPointRadius(1);
-
-        Line line6 = new Line(mPointValues6).setColor(Color.WHITE).setStrokeWidth(0);
-        line6.setShape(ValueShape.DIAMOND);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
-        line6.setCubic(true);//曲线是否平滑，即是曲线还是折线
-        line6.setFilled(false);//是否填充曲线的面积
-        line6.setHasLabels(false);//曲线的数据坐标是否加上备注
-        line6.setHasLabelsOnlyForSelected(false);//点击数据坐标提示数据（设置了这个line.setHasLabels(true);就无效）
-        line6.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
-//        line.setHasPoints(true);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
-        line6.setPointRadius(1);
 
 
-        lines.add(line);
-        lines.add(line2);
-        lines.add(line3);
-        lines.add(line4);
-        lines.add(line5);
-        lines.add(line6);
-        LineChartData data = new LineChartData();
-        data.setLines(lines);
 
-        //坐标轴
-        Axis axisX = new Axis(); //X轴
-        axisX.setHasTiltedLabels(false);  //X坐标轴字体是斜的显示还是直的，true是斜的显示
-        axisX.setTextColor(Color.BLACK);  //设置字体颜色
-        //axisX.setName("date");  //表格名称
-        axisX.setTextSize(6);//设置字体大小
-
-//        axisX.setMaxLabelChars(5);
-        axisX.setMaxLabelChars(3); //最多几个X轴坐标，意思就是你的缩放让X轴上数据的个数7<=x<=mAxisXValues.length
-        axisX.setValues(mAxisXValues); //填充X轴的坐标名称
-        data.setAxisXBottom(axisX); //x 轴在底部
-//        data.setAxisXTop(axisX);  //x 轴在顶部
-//        axisX.setHasLines(true); //x 轴分割线
-
-        // Y轴是根据数据的大小自动设置Y轴上限(在下面我会给出固定Y轴数据个数的解决方案)
-        Axis axisY = new Axis();  //Y轴
-        axisY.setMaxLabelChars(7);
-        axisY.setTextSize(6);//设置字体大小
-        axisY.setTextColor(Color.BLACK);
-        axisY.setHasLines(true);
-        List<AxisValue> values = new ArrayList<>();
-        for (int i = 0; i < 80; i += 10) {
-            AxisValue value = new AxisValue(i);
-            String label = "" + i;
-            value.setLabel(label);
-            values.add(value);
-        }
-        axisY.setValues(values);
-//        axisY.setValues(mAxisYValues);
-        data.setAxisYLeft(axisY);  //Y轴设置在左边
-//        data.setAxisYRight(axisY);  //y轴设置在右边
-
-
-        //设置行为属性，支持缩放、滑动以及平移
-        line_chart_view.setInteractive(true);
-        line_chart_view.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
-        line_chart_view.setMaxZoom((float) 2);//最大方法比例
-        line_chart_view.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
-        line_chart_view.setLineChartData(data);
-
-        line_chart_view.setVisibility(View.VISIBLE);
-        /**注：下面的7，10只是代表一个数字去类比而已
-         * 当时是为了解决X轴固定数据个数。见（http://forum.xda-developers.com/tools/programming/library-hellocharts-charting-library-t2904456/page2）;
-         */
-        Viewport v = new Viewport(line_chart_view.getMaximumViewport());
-        v.left = 0;
-        v.right = 7;
-        v.bottom = -30;
-        line_chart_view.setCurrentViewport(v);
-    }
-
-
-    /**
-     * 图表的每个点的显示
-     */
-    private void getAxisPoints() {
-        for (int i=0;i<7;i++){
-            mPointValues.add(new PointValue((float) i,(float) Math.random()*40));
-            mPointValues2.add(new PointValue((float) i,(float) Math.random()*40));
-            mPointValues3.add(new PointValue((float) i,(float) Math.random()*40));
-            mPointValues4.add(new PointValue((float) i,(float) Math.random()*40));
-            mPointValues5.add(new PointValue((float) i,(float) 40));
-            mPointValues6.add(new PointValue((float) i,(float) 0));
-        }
-    }
-
-    /**
-     * X 轴的显示
-     */
-    private void getAxisXLables() {
-        for (int i = 0; i < date.length; i++) {
-            mAxisXValues.add(new AxisValue(i).setLabel(date[i]));
-        }
-    }
 
     @Override
     protected int getLayoutId() {
@@ -431,6 +294,7 @@ public class EquipmentInformationActivity extends UpperActivity
         Intent intent = new Intent(this, ImageSelectActivity.class);
         intent.putExtra(CURRENT_IMAGE_LIST_LENGTH,imgUrls.size());
         startActivityForResult(intent, ALBUMCODE);
+
     }
 
     @Override
@@ -483,8 +347,16 @@ public class EquipmentInformationActivity extends UpperActivity
 
 
     @Override
-    public void getInspectionItemSuccess(InspectionItemBean data) {
-        //做数据处理
+    public void getInspectionItemSuccess(ArrayList<InspectionItemBean> data) {
+        inspectionItems = data;
+        if (data==null) {
+            getInspectionItemFail("数据错误");
+            return;
+        }
+        Log.e("equipmentSubmitAdapter",data.size()+"");
+        equipmentSubmitAdapter = new EquipmentSubmitAdapter(this,inspectionItems);
+        Log.e("equipmentSubmitAdapter",equipmentSubmitAdapter+"");
+        equipment_run_state_submit_recycler.setAdapter(equipmentSubmitAdapter);
     }
 
     @Override
@@ -492,13 +364,59 @@ public class EquipmentInformationActivity extends UpperActivity
 //        if (dialogManager==null)
 //            dialogManager = new DialogManager(this);
 //        dialogManager.showRecordingDialog(errorMsg);
+//        ToastUtils.showToast(this,errorMsg);
+        Log.e("getInspectionItem",errorMsg);
         ToastUtils.showToast(this,errorMsg);
+        failHandle();
+    }
+
+    @Override
+    public AcquisitionSensorBean getNodeIds(Long modelId) {
+        for (AcquisitionSensorBean acquisitionSensorBean:acquisitionSensorArr){
+            if (acquisitionSensorBean.getModelId()==modelId)
+                return acquisitionSensorBean;
+        }
+        return null;
+    }
+
+    @Override
+    public ArrayList<AcquisitionSensorDataBean> getKpiCodes(Long modelId) {
+        return acquisitionSensorDataMap.get(modelId);
     }
 
     @Override
     public void getMonitoringPointDataSuccess(ArrayList<MonitoringPointDataBean> data) {
+        if (data==null){
+            getMonitoringPointDataFail("数据错误");
+            return;
+        }
         //做数据处理
+        currentMonitorindex++;
+        long nodeid = -1;
+        HashMap<Long,ArrayList<MonitoringPointDataBean>> dataMap = new HashMap<>();
+        for (MonitoringPointDataBean monitoringPointDataBean:data){
+            nodeid = monitoringPointDataBean.getNodeId();
+            long kpiCode = monitoringPointDataBean.getKpiCode();
+            ArrayList<MonitoringPointDataBean> dataArrByCpiCode = dataMap.get(kpiCode);
+            if (dataArrByCpiCode!=null) {
+                dataArrByCpiCode.add(monitoringPointDataBean);
+            }else {
+             dataArrByCpiCode = new ArrayList<>();
+                dataArrByCpiCode.add(monitoringPointDataBean);
+                dataMap.put(kpiCode,dataArrByCpiCode);
+            }
+
+        }
+        if (nodeid!=-1)
+            monitorPointDataMap.put(nodeid,dataMap);
+        if (currentMonitorindex==acquisitionSensorSize){
+            MonitorPointRecyclerAdapter adapter
+                    = new MonitorPointRecyclerAdapter(this,acquisitionSensorArr,acquisitionSensorDataMap,monitorPointDataMap);
+            equipment_data_show_recycler.setAdapter(adapter);
+
+        }
         ifGetDevice = true;
+        dialog.hideDialog();
     }
 
     @Override
@@ -506,22 +424,39 @@ public class EquipmentInformationActivity extends UpperActivity
 //        if (dialogManager==null)
 //            dialogManager = new DialogManager(this);
 //        dialogManager.showRecordingDialog(errorMsg);
+        if (ifFinsh)
+            return;
         ToastUtils.showToast(this,errorMsg);
+        failHandle();
     }
 
     @Override
     public void onClick(View view) {
-        if (!ifGetDevice)
-            return;
+//        if (!ifGetDevice)
+//            return;
         EquipmentMsgSubmitModel equipmentMsgSubmitModel = new EquipmentMsgSubmitModel(this,this);
         equipmentMsgSubmitModel.submitMsg();
         if (dialog==null)
             dialog = new SimperDialog(this);
-        dialog.setTitle("设备信息提交中...").showDialog();
+        dialog.setContent("设备信息提交中...").showDialog();
     }
 
     @Override
-    public Map<Integer, Boolean> getEquipmentInformation() {
+    public void getDeviceFail() {
+        ToastUtils.showToast(this,"读卡失败");
+        finish();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        if (!ifReadDeviceIdSuccess)
+            getDeviceFail();
+    }
+
+
+
+    @Override
+    public Map<String, Boolean> getEquipmentInformation() {
         return equipmentSubmitAdapter.getSubmitValue();
     }
 
@@ -535,11 +470,24 @@ public class EquipmentInformationActivity extends UpperActivity
         return imgUrls;
     }
 
+
+    @Override
+    public long getDeviceID() {
+        return deviceId;
+    }
+
+
+
     @Override
     public void submitSuccess() {
         if (ifFinsh)
             return;
-        dialog.hideDialog();
+//        dialog.hideDialog();
+        Intent intent = new Intent(this,LoginActivity.class);
+        startActivity(intent);
+        ActivityPreservationUtils.finshAllActivity();
+        ToastUtils.showToast(this,"信息提交成功");
+        finish();
     }
 
     @Override
@@ -555,23 +503,86 @@ public class EquipmentInformationActivity extends UpperActivity
 
     @Override
     public void getDeviceSuccess(String deviceID) {
-//        Log.e("nfcId",deviceID);
-//        initRecycler();
+        if (ifFinsh)
+            return;
+        dialog.hideDialog();
+        if (!deviceID.equals(deviceID)) {
+            ToastUtils.showToast(this, "请选择相同设备！");
+            finish();
+        }
+        dialog.setContent("正在获取服务器数据....").showDialog();
+        initRecycler();
+        getData();
 //        initChart();
         ifReadDeviceIdSuccess = true;
-        dialog.hideDialog();
         ToastUtils.showToast(this, deviceID);
     }
 
+
     @Override
-    public void getDeviceFail() {
-        ToastUtils.showToast(this,"读卡失败");
-        finish();
+    public void getAcquisitionSensorSuccess(ArrayList<AcquisitionSensorBean> data) {
+        if (ifFinsh)
+            return;
+        if (data==null){
+            getAcquisitionSensorFail("数据错误");
+            return;
+        }
+        acquisitionSensorSize = data.size();
+        for (AcquisitionSensorBean dataBean:data){
+            GetAcquisitionSensorDataModel getAcquisitionSensorDataModel = new GetAcquisitionSensorDataModel(this,this);
+            getAcquisitionSensorDataModel.getAcquisitionData(dataBean.getModelId());
+        }
+        acquisitionSensorArr = data;
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface) {
-        if (!ifReadDeviceIdSuccess)
-            getDeviceFail();
+    public void getAcquisitionSensorFail(String errorMsg) {
+        if (ifFinsh)
+            return;
+        Log.e("getAcquisitionSensorFail",errorMsg);
+        ToastUtils.showToast(this,errorMsg);
+        failHandle();
+    }
+
+    @Override
+    public void getAcquisitionSensorDataSuccess(ArrayList<AcquisitionSensorDataBean> data) {
+        if (ifFinsh)
+            return;
+        if (data==null){
+            getAcquisitionSensorDataFail("数据错误");
+            return;
+        }
+        Log.e("getAcquisitionSensorDataSuccess",data+"");
+        if (data.size()>0){
+            GetMonitoringPointDataModel getMonitoringPointDataModel = new GetMonitoringPointDataModel(this,this);
+            AcquisitionSensorDataBean dataBean = data.get(0);
+            acquisitionSensorDataMap.put(dataBean.getModelId(),data);
+            getMonitoringPointDataModel.getMonitoringPointData(dataBean.getModelId());
+        }
+    }
+
+    @Override
+    public void getAcquisitionSensorDataFail(String errorMsg) {
+        if (ifFinsh)
+            return;
+        Log.e("getAcquisitionSensorDataFail",errorMsg);
+        ToastUtils.showToast(this,errorMsg);
+        failHandle();
+    }
+
+    @Override
+    public void loginOut() {
+        if (ifFinsh)
+            return;
+        if (dialog!=null)
+            dialog.hideDialog();
+        LoginOutDialog dialog = LoginOutDialog.getLoginOutDialog(this);
+        dialog.showDialog();
+    }
+
+
+    private void failHandle(){
+        dialog.hideDialog();
+        finish();
     }
 }

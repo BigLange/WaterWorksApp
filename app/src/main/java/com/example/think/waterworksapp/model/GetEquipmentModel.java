@@ -9,6 +9,7 @@ import com.example.think.waterworksapp.base_intface.GetEquipmentView;
 import com.example.think.waterworksapp.base_intface.RequestView;
 import com.example.think.waterworksapp.bean.EquipmentMsgBean;
 import com.example.think.waterworksapp.bean.TeamMsgBean;
+import com.example.think.waterworksapp.utils.ICallBack;
 import com.example.think.waterworksapp.utils.OkHttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,13 +28,13 @@ import java.util.HashMap;
 /**
  * Created by Think on 2016/8/22.
  */
-public class GetEquipmentModel implements Callback{
+public class GetEquipmentModel{
 
-    private final String GET_EQUIPMENT_MSG_URL = "rest/open/teamUIService/getDevicesByTeamId";
+    private final String GET_EQUIPMENT_MSG_URL = "rest/open/maintenanceUIService/getDevicesByTeamId";
 
     private MyApplication myApplication;
     private GetEquipmentView getEquipmentView;
-    private ArrayList<EquipmentMsgBean> dataArr;
+    private ICallBack<ArrayList<EquipmentMsgBean>> iCallBack;
     private OkHttpUtils okHttpUtils;
 
 
@@ -42,10 +43,13 @@ public class GetEquipmentModel implements Callback{
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case RequestView.REQUEST_SUCCESS:
-                    getEquipmentView.LoadOver(dataArr);
+                    getEquipmentView.LoadOver(iCallBack.getData());
                     break;
                 case RequestView.REQUEST_FAIL:
                     getEquipmentView.LoadError(msg.obj+"");
+                    break;
+                case RequestView.REQUEST_LOGIN_OUT:
+                    getEquipmentView.loginOut();
                     break;
             }
         }
@@ -58,52 +62,11 @@ public class GetEquipmentModel implements Callback{
     }
 
     public void getEquipmentMsg(){
-        HashMap<String,Object> headMap = new HashMap<>();
-        headMap.put("token",myApplication.getSession().getAccess_token());
-        HashMap<String,Object> bodyMap = new HashMap<>();
         TeamMsgBean teamMsgBean = myApplication.getTeamMsgBean();
-        bodyMap.put("teamId",teamMsgBean.getId());
-        okHttpUtils.doPostAsynValueToHeader(GET_EQUIPMENT_MSG_URL,headMap,bodyMap,this);
+        String url = GET_EQUIPMENT_MSG_URL+"?"+RequestView.TOKEN+"="+myApplication.getSession().getAccess_token();
+        long teamId = teamMsgBean.getId();
+        iCallBack = new ICallBack<>(handler,new TypeToken<ArrayList<EquipmentMsgBean>>(){}.getType());
+        okHttpUtils.doPostAsyn(url,"["+teamId+"]",iCallBack);
     }
 
-    private void analysisEquipmentMsgBean(String data){
-        Gson gson = new Gson();
-        Type dataType = new TypeToken<ArrayList<EquipmentMsgBean>>(){}.getType();
-        dataArr = gson.fromJson(data,dataType);
-    }
-
-
-    @Override
-    public void onFailure(Request request, IOException e) {
-        Message msg = Message.obtain();
-        msg.what = RequestView.REQUEST_FAIL;
-        msg.obj = "网络错误";
-        handler.sendMessage(msg);
-    }
-
-    @Override
-    public void onResponse(Response response) throws IOException {
-        String loginResult = response.body().string();
-        try {
-            JSONObject jsonObject = new JSONObject(loginResult);
-            String responseCode = jsonObject.getString(RequestView.RESPONSE_CODE);
-            String retMessage = "";
-            Message msg = Message.obtain();
-            if (RequestView.RESPONSE_SUCCESS.equals(responseCode)){
-                analysisEquipmentMsgBean(jsonObject.getString(RequestView.RESPONSE_DATA));
-                msg.what = RequestView.REQUEST_SUCCESS;
-            }else {
-                retMessage = jsonObject.getString(RequestView.RESPONSE_MSG);
-                msg.what = RequestView.REQUEST_FAIL;
-            }
-            msg.obj = retMessage;
-            handler.sendMessage(msg);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Message msg = Message.obtain();
-            msg.what = RequestView.REQUEST_FAIL;
-            msg.obj = "数据解析异常";
-            handler.sendMessage(msg);
-        }
-    }
 }

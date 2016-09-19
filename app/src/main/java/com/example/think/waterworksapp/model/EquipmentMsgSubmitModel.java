@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.example.think.waterworksapp.application.MyApplication;
 import com.example.think.waterworksapp.base_intface.EquipmentMsgSubmitView;
@@ -21,7 +22,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +33,14 @@ import java.util.Map;
  */
 public class EquipmentMsgSubmitModel implements Callback{
 
-    private final String UP_LOAD_MSG_URL = "rest/open/ResourceUIService/getKPIByDeviceId";
+    private final String UP_LOAD_MSG_URL = "rest/upload/maintenanceUIService/addInspectionRecord";
 
-    private final String SUBMIT_DATA_BY_SELECT_KEY = "submitDataBySelectKey";
-    private final String SUBMIT_DATA_BY_INPUT_KEY = "submitDataByInputKey";
-    private final String SUBMIT_IMAGE_KEY = "submitImageKey";
+    private final String DEVICE_ID = "deviceId";
+    private final String DEVICE_STATUS = "deviceStatus";
+    private final String SUBMIT_DATA_INSPCE = "submitDataByInputKey";
+    private final String INSPECTION_DATE = "inspectionDate";
+    private final String INSPECTOIN_CONTEXT = "inspectionContext";
+    private final String IMAGE_URL = "imageUrl";
 
     private OkHttpUtils okHttpUtils;
     private EquipmentMsgSubmitView equipmentMsgSubmitView;
@@ -50,6 +56,8 @@ public class EquipmentMsgSubmitModel implements Callback{
                 case RequestView.REQUEST_FAIL:
                     equipmentMsgSubmitView.submitFail(msg.obj+"");
                     break;
+                case RequestView.REQUEST_LOGIN_OUT:
+                    equipmentMsgSubmitView.loginOut();
             }
         }
     };
@@ -62,23 +70,26 @@ public class EquipmentMsgSubmitModel implements Callback{
 
 
     public void submitMsg(){
+        String url =UP_LOAD_MSG_URL +"?"+RequestView.TOKEN+"="+application.getSession().getAccess_token();
         ArrayList<String> imgUrls = equipmentMsgSubmitView.getEquipmentImageInformation();
         ArrayList<Bitmap> upLoadBitmaps = ImageLoad.getImageLoad().fromPathGetBitmap(imgUrls);
-        Map<Integer,Boolean> equipmentInformationMap = equipmentMsgSubmitView.getEquipmentInformation();
+        Map<String,Boolean> equipmentInformationMap = equipmentMsgSubmitView.getEquipmentInformation();
         String equipmentInformationStr = uoLoadDataToJson(equipmentInformationMap);
         String equipmentDetailedInformationStr = equipmentMsgSubmitView.getEquipmentDetailedInformation();
-        HashMap<String,String> dataMap = new HashMap();
-        dataMap.put(SUBMIT_DATA_BY_SELECT_KEY,equipmentInformationStr);
-        dataMap.put(SUBMIT_DATA_BY_INPUT_KEY,equipmentDetailedInformationStr);
-        okHttpUtils.upLoadImg(UP_LOAD_MSG_URL,upLoadBitmaps,SUBMIT_IMAGE_KEY,dataMap,this);
+        HashMap<String,Object> dataMap = new HashMap();
+        dataMap.put(DEVICE_ID,equipmentMsgSubmitView.getDeviceID());
+        dataMap.put(DEVICE_STATUS,equipmentInformationStr);
+        dataMap.put(INSPECTION_DATE,getCurrentSimpleData());
+        dataMap.put(INSPECTOIN_CONTEXT,equipmentDetailedInformationStr);
+        okHttpUtils.upLoadImg(url,upLoadBitmaps,IMAGE_URL,dataMap,this);
     }
 
 
 
 
-    private String uoLoadDataToJson(Map<Integer,Boolean> data){
+    private String uoLoadDataToJson(Map<String,Boolean> data){
         Gson gson = new Gson();
-        Type type = new TypeToken<Map<Integer,Boolean>>(){}.getType();
+        Type type = new TypeToken<Map<String,Boolean>>(){}.getType();
         return gson.toJson(data,type);
     }
 
@@ -97,9 +108,12 @@ public class EquipmentMsgSubmitModel implements Callback{
             JSONObject jsonObject = new JSONObject(loginResult);
             String responseCode = jsonObject.getString(RequestView.RESPONSE_CODE);
             String retMessage = "";
+            Log.e("submit",responseCode);
             Message msg = Message.obtain();
             if (RequestView.RESPONSE_SUCCESS.equals(responseCode)){
                 msg.what = RequestView.REQUEST_SUCCESS;
+            }else if (RequestView.RESPINSE_LOGIN_OUT.equals(responseCode)){
+                msg.what = RequestView.REQUEST_LOGIN_OUT;
             }else {
                 retMessage = jsonObject.getString(RequestView.RESPONSE_MSG);
                 msg.what = RequestView.REQUEST_FAIL;
@@ -113,5 +127,12 @@ public class EquipmentMsgSubmitModel implements Callback{
             msg.obj = "数据解析异常";
             handler.sendMessage(msg);
         }
+    }
+
+
+    private String getCurrentSimpleData(){
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(date);
     }
 }

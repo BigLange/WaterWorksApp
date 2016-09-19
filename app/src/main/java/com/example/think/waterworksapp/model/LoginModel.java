@@ -3,6 +3,7 @@ package com.example.think.waterworksapp.model;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.example.think.waterworksapp.WelcomeActivity;
 import com.example.think.waterworksapp.application.MyApplication;
@@ -30,7 +31,7 @@ import java.util.HashMap;
  * Created by Think on 2016/6/21.
  */
 public class LoginModel implements Callback {
-    private final String LOGIN_URL="login.json";
+    private final String LOGIN_URL="oauth2/access_token?";
     public static final String SHARED_PREFERENCES_TITLE_NAME = "login_token_key";
 
     private String userName;
@@ -82,8 +83,13 @@ public class LoginModel implements Callback {
             return;
         }
 
-        if(passWord.length()<6){
+        if(userName.length()<6){
             ToastUtils.showToast(context,"账号长度过短");
+            return;
+        }
+
+        if(passWord.length()<6){
+            ToastUtils.showToast(context,"密码长度过短");
             return;
         }
 
@@ -96,11 +102,11 @@ public class LoginModel implements Callback {
         mDialog.showDialog();
         HashMap<String,Object> loginMap = new HashMap<>();
         loginMap.put("grant_type","password");
-        loginMap.put("userName",userName);
-        loginMap.put("passWord",passWord);
+        loginMap.put("username",userName);
+        loginMap.put("password",passWord);
         if(mHttpUtils==null)
             mHttpUtils = OkHttpUtils.getOkHttpUtils();
-        mHttpUtils.doPostAsynValueToHeader(LOGIN_URL,loginMap,this);
+        mHttpUtils.doPostAsyn(LOGIN_URL,loginMap,this);
     }
 
     /**
@@ -141,6 +147,7 @@ public class LoginModel implements Callback {
     @Override
     public void onResponse(Response response) throws IOException {
         String loginResult = response.body().string();
+        Log.e("login",loginResult+"namemsmdhiahidahidsahi");
         try {
             JSONObject loginJson = new JSONObject(loginResult);
             String retCode = loginJson.getString(RequestView.RESPONSE_CODE);

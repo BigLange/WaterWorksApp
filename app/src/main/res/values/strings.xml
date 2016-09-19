@@ -44,4 +44,8 @@
     <string name="select_nfc_Value">正在等待NFC</string>
     <!--Select Personnel Activity String-->
 
+    <!--monitoring_point_data_show_item-->
+    <string name="monitoring_point_data_show_not_data">暂无数据</string>
+    <!--monitoring_point_data_show_item-->
+
 </resources>

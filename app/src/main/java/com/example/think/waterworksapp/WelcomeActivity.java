@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.example.think.waterworksapp.application.MyApplication;
 import com.example.think.waterworksapp.base_intface.RequestView;
@@ -116,6 +117,7 @@ public class WelcomeActivity extends Activity implements Callback,DialogManager.
     @Override
     public void onResponse(Response response) throws IOException {
         String loginResult = response.body().string();
+        Log.e("LoginToken",loginResult);
         try {
             JSONObject loginJson = new JSONObject(loginResult);
             String retCode = loginJson.getString(RequestView.RESPONSE_CODE);

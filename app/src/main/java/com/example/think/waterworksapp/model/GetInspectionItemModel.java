@@ -11,6 +11,7 @@ import com.example.think.waterworksapp.base_intface.RequestView;
 import com.example.think.waterworksapp.bean.EquipmentMsgBean;
 import com.example.think.waterworksapp.bean.InspectionItemBean;
 import com.example.think.waterworksapp.bean.TeamMsgBean;
+import com.example.think.waterworksapp.utils.ICallBack;
 import com.example.think.waterworksapp.utils.OkHttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,15 +29,16 @@ import java.util.HashMap;
 
 /**
  * Created by Think on 2016/8/22.
+ * 获得巡检项目
  */
-public class GetInspectionItemModel implements Callback{
+public class GetInspectionItemModel{
 
-    private final String GET_INSPECTION_ITEM_MSG_URL = "rest/open/inspectionItemUIService/getAllInspectionItem";
+    private final String GET_INSPECTION_ITEM_MSG_URL = "rest/open/maintenanceUIService / getInspectionItemsByModelId";
 
     private MyApplication myApplication;
     private GetInspectionItemView getInspectionItemView;
-    private InspectionItemBean data;
     private OkHttpUtils okHttpUtils;
+    private ICallBack<ArrayList<InspectionItemBean>> iCallBack;
 
 
     private Handler handler = new Handler(){
@@ -44,10 +46,13 @@ public class GetInspectionItemModel implements Callback{
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case RequestView.REQUEST_SUCCESS:
-                    getInspectionItemView.getInspectionItemSuccess(data);
+                    getInspectionItemView.getInspectionItemSuccess(iCallBack.getData());
                     break;
                 case RequestView.REQUEST_FAIL:
                     getInspectionItemView.getInspectionItemFail(msg.obj+"");
+                    break;
+                case RequestView.REQUEST_LOGIN_OUT:
+                    getInspectionItemView.loginOut();
                     break;
             }
         }
@@ -59,52 +64,9 @@ public class GetInspectionItemModel implements Callback{
         okHttpUtils = OkHttpUtils.getOkHttpUtils();
     }
 
-    public void getInspectionItem(){
-        HashMap<String,Object> headMap = new HashMap<>();
-        headMap.put("token",myApplication.getSession().getAccess_token());
-        HashMap<String,Object> bodyMap = new HashMap<>();
-//        TeamMsgBean teamMsgBean = myApplication.getTeamMsgBean();
-//        bodyMap.put("teamId",teamMsgBean.getId());
-        okHttpUtils.doPostAsynValueToHeader(GET_INSPECTION_ITEM_MSG_URL,headMap,bodyMap,this);
-    }
-
-    private void analysisInspectionItemBean(String dataJson){
-        Gson gson = new Gson();
-        data = gson.fromJson(dataJson,InspectionItemBean.class);
-    }
-
-
-    @Override
-    public void onFailure(Request request, IOException e) {
-        Message msg = Message.obtain();
-        msg.what = RequestView.REQUEST_FAIL;
-        msg.obj = "网络错误";
-        handler.sendMessage(msg);
-    }
-
-    @Override
-    public void onResponse(Response response) throws IOException {
-        String loginResult = response.body().string();
-        try {
-            JSONObject jsonObject = new JSONObject(loginResult);
-            String responseCode = jsonObject.getString(RequestView.RESPONSE_CODE);
-            String retMessage = "";
-            Message msg = Message.obtain();
-            if (RequestView.RESPONSE_SUCCESS.equals(responseCode)){
-                analysisInspectionItemBean(jsonObject.getString(RequestView.RESPONSE_DATA));
-                msg.what = RequestView.REQUEST_SUCCESS;
-            }else {
-                retMessage = jsonObject.getString(RequestView.RESPONSE_MSG);
-                msg.what = RequestView.REQUEST_FAIL;
-            }
-            msg.obj = retMessage;
-            handler.sendMessage(msg);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Message msg = Message.obtain();
-            msg.what = RequestView.REQUEST_FAIL;
-            msg.obj = "数据解析异常";
-            handler.sendMessage(msg);
-        }
+    public void getInspectionItem(long modelId){
+        String url = GET_INSPECTION_ITEM_MSG_URL+"?"+RequestView.TOKEN+"="+myApplication.getSession().getAccess_token();
+        iCallBack = new ICallBack<>(handler,new TypeToken<ArrayList<InspectionItemBean>>(){}.getType());
+        okHttpUtils.doPostAsyn(url,"["+modelId+"]",iCallBack);
     }
 }

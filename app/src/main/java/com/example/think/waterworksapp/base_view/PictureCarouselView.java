@@ -70,6 +70,7 @@ public class PictureCarouselView extends RelativeLayout implements ViewPager.OnP
         dataSize = imgResourcesId.size();
         initView();
         initEvent();
+        startTimer();
     }
 
 

@@ -9,6 +9,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.think.waterworksapp.R;
+import com.example.think.waterworksapp.bean.InspectionItemBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,17 +19,20 @@ import java.util.HashMap;
  */
 public class EquipmentSubmitAdapter extends RecyclerView.Adapter<EquipmentSubmitAdapter.MyHolder> {
 
-    private HashMap<Integer,Boolean> submitValue = new HashMap<>();
+    private HashMap<String,Boolean> submitValue = new HashMap<>();
 
     private final int LAYOUT_ID = R.layout.equipment_submit_recycler_item;
     private final int RADIO_BUTTON_TRUE = R.id.equipment_run_state_submit_item_radio_true;
     private final int RADIO_BUTTON_FALSE = R.id.equipment_run_state_submit_item_radio_false;
-    private ArrayList<String> data;
+    private ArrayList<InspectionItemBean> data;
     private Context context;
 
-    public EquipmentSubmitAdapter(Context context, ArrayList<String> data){
+    public EquipmentSubmitAdapter(Context context, ArrayList<InspectionItemBean> data){
         this.context = context;
         this.data = data;
+        for (InspectionItemBean inspectionItemBean:data){//初始化数据
+            submitValue.put(inspectionItemBean.getItem(),true);
+        }
     }
 
 
@@ -41,8 +45,9 @@ public class EquipmentSubmitAdapter extends RecyclerView.Adapter<EquipmentSubmit
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
+        InspectionItemBean inspectionItem = data.get(position);
         holder.radioButton.setOnCheckedChangeListener(new MyCheckedChangeListener(position));
-        holder.titleTxt.setText(data.get(position));
+        holder.titleTxt.setText(inspectionItem.getStandardContext());
     }
 
     @Override
@@ -50,7 +55,7 @@ public class EquipmentSubmitAdapter extends RecyclerView.Adapter<EquipmentSubmit
         return data.size();
     }
 
-    public HashMap<Integer,Boolean> getSubmitValue(){
+    public HashMap<String,Boolean> getSubmitValue(){
         return submitValue;
     }
 
@@ -77,10 +82,12 @@ public class EquipmentSubmitAdapter extends RecyclerView.Adapter<EquipmentSubmit
 
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int i) {
+            InspectionItemBean inspectionItemBean = data.get(position);
+            String inspectionItem = inspectionItemBean.getItem();
             if (i == RADIO_BUTTON_TRUE){
-                submitValue.put(position,true);
+                submitValue.put(inspectionItem,true);
             }else if (i == RADIO_BUTTON_FALSE){
-                submitValue.put(position,false);
+                submitValue.put(inspectionItem+"",false);
             }
         }
     }

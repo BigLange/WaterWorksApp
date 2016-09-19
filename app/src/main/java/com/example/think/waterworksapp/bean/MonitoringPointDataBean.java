@@ -1,14 +1,16 @@
 package com.example.think.waterworksapp.bean;
 
+import java.util.Date;
+
 /**
  * Created by Think on 2016/8/23.
  */
 public class MonitoringPointDataBean {
 
-    private int nodeId;
-    private int kpiCode;
+    private long nodeId;
+    private long kpiCode;
     private int quality;
-    private int value;
+    private float value;
     private String instance;
     private String arisingTime;
     private String insertTime;
@@ -16,22 +18,14 @@ public class MonitoringPointDataBean {
     private String notes;
     private String valueStr;
     private String stringValue;
-    private String numberValue;
+    private float numberValue;
 
-    public int getNodeId() {
+    public long getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(int nodeId) {
+    public void setNodeId(long nodeId) {
         this.nodeId = nodeId;
-    }
-
-    public int getKpiCode() {
-        return kpiCode;
-    }
-
-    public void setKpiCode(int kpiCode) {
-        this.kpiCode = kpiCode;
     }
 
     public int getQuality() {
@@ -42,13 +36,14 @@ public class MonitoringPointDataBean {
         this.quality = quality;
     }
 
-    public int getValue() {
-        return value;
+    public long getKpiCode() {
+        return kpiCode;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setKpiCode(long kpiCode) {
+        this.kpiCode = kpiCode;
     }
+
 
     public String getInstance() {
         return instance;
@@ -106,11 +101,19 @@ public class MonitoringPointDataBean {
         this.stringValue = stringValue;
     }
 
-    public String getNumberValue() {
+    public float getNumberValue() {
         return numberValue;
     }
 
-    public void setNumberValue(String numberValue) {
+    public void setNumberValue(float numberValue) {
         this.numberValue = numberValue;
+    }
+
+    public float getValue() {
+        return value;
+    }
+
+    public void setValue(float value) {
+        this.value = value;
     }
 }

@@ -18,13 +18,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by Think on 2016/8/23.
  */
 public class LoginOutModel implements Callback{
 
-    private final String LOGIN_OUT_URL = "api/rest/open/kpiDataService/getKpiValueList";
+    private final String LOGIN_OUT_URL = "oauth2/logout? ";
 
     private MyApplication myApplication;
     private LoginOutView loginOutView;
@@ -52,7 +53,9 @@ public class LoginOutModel implements Callback{
     }
 
     public void loginOut(){
-        okHttpUtils.doGetAsyn(LOGIN_OUT_URL,this);
+        HashMap<String,Object> loginOutMap = new HashMap();
+        loginOutMap.put(RequestView.TOKEN,myApplication.getSession().getAccess_token());
+        okHttpUtils.doPostAsyn(LOGIN_OUT_URL,loginOutMap,this);
         deleteToken();
     }
 

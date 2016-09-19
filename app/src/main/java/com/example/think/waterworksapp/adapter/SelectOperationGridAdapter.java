@@ -29,23 +29,23 @@ public class SelectOperationGridAdapter extends ArrayAdapter<SelectOperationBtnB
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHodle hodle;
+        ViewHolder hodle;
         SelectOperationBtnBean data = getItem(position);
         if (convertView==null){
             convertView = LayoutInflater.from(getContext()).inflate(layoutResourcesId,parent,false);
-            hodle = new ViewHodle();
+            hodle = new ViewHolder();
             hodle.icon = (ImageView)convertView.findViewById(R.id.operation_item_btn_img);
             hodle.title = (TextView)convertView.findViewById(R.id.operation_item_btn_title);
             convertView.setTag(hodle);
         }else{
-            hodle = (ViewHodle)convertView.getTag();
+            hodle = (ViewHolder)convertView.getTag();
         }
         hodle.icon.setImageResource(data.getImgResourcesId());
         hodle.title.setText(data.getTitle());
         return convertView;
     }
 
-    private class ViewHodle{
+    private class ViewHolder{
         ImageView icon;
         TextView title;
     }

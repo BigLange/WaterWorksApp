@@ -1,5 +1,6 @@
 package com.example.think.waterworksapp.utils;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -30,6 +31,7 @@ public class SetListViewAndGridViewHeightUtils {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
     }
+
 
 
     public static void setGridViewHeight(GridView gridView){
