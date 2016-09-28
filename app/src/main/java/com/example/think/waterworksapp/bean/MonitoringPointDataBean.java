@@ -1,6 +1,5 @@
 package com.example.think.waterworksapp.bean;
 
-import java.util.Date;
 
 /**
  * Created by Think on 2016/8/23.

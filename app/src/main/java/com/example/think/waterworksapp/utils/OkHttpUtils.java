@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class OkHttpUtils {
     private final  String PERECETION_URL = "http://36.110.36.118:8081/api/";
-    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");//这个表示上传的类型为图片类型
+    private final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");//这个表示上传的类型为图片类型
     private OkHttpClient mOkHttpClient;
     private static OkHttpUtils httpUtils;
 

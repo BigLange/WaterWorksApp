@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/inspection_device_img"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="10dp"
+        android:src="@drawable/logo"/>
+
+    <TextView
+        android:id="@+id/inspection_device_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/inspection_device_img"
+        android:padding="10dp"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp"
+        android:text="1#励磁室"/>
+
+    <TextView
+        android:id="@+id/inspection_content_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="5dp"
+        android:textColor="@color/colorGray_3"
+        android:textSize="14sp"
+        android:layout_below="@id/inspection_device_txt"
+        android:layout_toEndOf="@id/inspection_device_img"
+        android:text="巡检内容："/>
+
+    <TextView
+        android:id="@+id/inspection_content_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textColor="@color/colorGray_3"
+        android:textSize="14sp"
+        android:layout_below="@id/inspection_device_txt"
+        android:layout_toEndOf="@id/inspection_content_title"
+        android:text="有噪音"/>
+
+    <TextView
+        android:id="@+id/inspection_person_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textColor="@color/colorGray_3"
+        android:textSize="14sp"
+        android:text="巡检人："
+        android:layout_marginLeft="5dp"
+        android:layout_below="@id/inspection_content_title"
+        android:layout_toEndOf="@id/inspection_device_img" />
+
+    <TextView
+        android:id="@+id/inspection_person_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textColor="@color/colorGray_3"
+        android:textSize="14sp"
+        android:text="胡浪"
+        android:layout_below="@id/inspection_content_title"
+        android:layout_toEndOf="@id/inspection_person_title" />
+
+    <TextView
+        android:id="@+id/inspection_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inspection_content_title"
+        android:layout_alignParentEnd="true"
+        android:padding="5dp"
+        android:textColor="@color/colorGray_3"
+        android:textSize="14sp"
+        android:text="2016-09-26 11:24:36"/>
+</RelativeLayout>

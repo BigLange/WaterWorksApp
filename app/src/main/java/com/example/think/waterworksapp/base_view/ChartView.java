@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.example.think.waterworksapp.bean.MonitoringPointDataBean;
+import com.example.think.waterworksapp.utils.DateFormatUtlis;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,16 +95,17 @@ public class ChartView extends LineChartView {
 
     private ArrayList<String> dateArrByData(ArrayList<MonitoringPointDataBean> maxSizeData) {
         ArrayList<String>  dateArr = new ArrayList<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         if (maxSizeData.size()>10){
             for (int i=maxSizeData.size()-10;i<maxSizeData.size();i++){
                 String dateStr = maxSizeData.get(i).getInsertTime();
-                String simpleFormatDate = dateToSimpleDate(dateStr);
+                String simpleFormatDate = DateFormatUtlis.simpleFormat(dateStr,simpleDateFormat);
                 dateArr.add(simpleFormatDate);
             }
         }else {
             for (MonitoringPointDataBean dataBean:maxSizeData){
                 String dateStr = dataBean.getInsertTime();
-                String simpleFormatDate = dateToSimpleDate(dateStr);
+                String simpleFormatDate = DateFormatUtlis.simpleFormat(dateStr,simpleDateFormat);
                 dateArr.add(simpleFormatDate);
             }
         }
@@ -214,12 +216,4 @@ public class ChartView extends LineChartView {
     }
 
 
-    private String dateToSimpleDate(String dateStr){
-        try {
-            Date date = simpleDateFormat.parse(dateStr);
-            return simpleDateFormat.format(date);
-        } catch (ParseException e) {
-            return "时间异常";
-        }
-    }
 }

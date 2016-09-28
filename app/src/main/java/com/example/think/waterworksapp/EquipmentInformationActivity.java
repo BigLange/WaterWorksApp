@@ -49,6 +49,7 @@ import com.example.think.waterworksapp.model.GetMonitoringPointDataModel;
 import com.example.think.waterworksapp.popup_window.AddImagePopupWindow;
 import com.example.think.waterworksapp.utils.ActivityPreservationUtils;
 import com.example.think.waterworksapp.utils.NfcUtils;
+import com.example.think.waterworksapp.utils.PhotographUtils;
 import com.example.think.waterworksapp.utils.SetListViewAndGridViewHeightUtils;
 import com.example.think.waterworksapp.utils.ToastUtils;
 
@@ -81,9 +82,9 @@ public class EquipmentInformationActivity extends UpperActivity
                         ,GetAcquisitionSensorView,GetAcquisitionSensorDataView{
 
     public static final String CURRENT_IMAGE_LIST_LENGTH = "current image list size";
-
-    //进入相机请求码
-    private final int CAPTURECODE = 111;
+//
+//    //进入相机请求码
+//    private final int CAPTURECODE = 111;
     //进入相册请求码
     private final int ALBUMCODE = 222;
     //进入查看大图的请求码
@@ -110,6 +111,7 @@ public class EquipmentInformationActivity extends UpperActivity
     private ArrayList<String> imgUrls = new ArrayList<>();
     private HashMap<String,Object> bodyMap;
     private NfcUtils nfcUtils;
+    private PhotographUtils photographUtils;//相机访问的工具类
 
 
 
@@ -177,8 +179,6 @@ public class EquipmentInformationActivity extends UpperActivity
 
     @Override
     protected void initView() {
-//        initRecycler();
-//        initChart();
         initValue();
         initImgUpLoad();
         initPopupWindow();
@@ -270,7 +270,7 @@ public class EquipmentInformationActivity extends UpperActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Intent intent = new Intent(this, ImagePreview.class);
         Bundle bundle = new Bundle();
-            bundle.putSerializable("dirPaths", imgUrls);
+        bundle.putSerializable("dirPaths", imgUrls);
         bundle.putInt("index", i);
         intent.putExtras(bundle);
         startActivityForResult(intent, IMGPRE);
@@ -282,8 +282,13 @@ public class EquipmentInformationActivity extends UpperActivity
      */
     @Override
     public void toPhotograph() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAPTURECODE);
+        if (photographUtils==null)
+            photographUtils = new PhotographUtils(this);
+        try {
+            photographUtils.saveBitmapByIntent();
+        } catch (IOException e) {
+            ToastUtils.showToast(this,"进入相机失败");
+        }
     }
 
     /**
@@ -300,9 +305,15 @@ public class EquipmentInformationActivity extends UpperActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK){
-            if (requestCode == CAPTURECODE) {
-                Bitmap bm = (Bitmap) data.getExtras().get("data");
-                setPathToSet(bm);
+            if (requestCode == PhotographUtils.PHOTO_GRAPH_KEY) {
+//                Bitmap bm = (Bitmap) data.getExtras().get("data");
+//                setPathToSet(bm);
+                String imagePath = photographUtils.getCurrentImgPath();
+                if (imagePath.length()>0) {
+                    imgUrls.add(photographUtils.getCurrentImgPath());
+                }else {
+                    ToastUtils.showToast(this,"获取图片失败");
+                }
             } else if (requestCode == ALBUMCODE) {
                 Bundle bundle = data.getExtras();
                 HashSet<String> albumPath = (HashSet<String>) bundle.getSerializable("dirPaths");
@@ -317,33 +328,34 @@ public class EquipmentInformationActivity extends UpperActivity
         }
     }
 
-    public void setPathToSet(Bitmap bm) {
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            Toast.makeText(EquipmentInformationActivity.this, "SD卡不能使用", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        File root = Environment.getExternalStorageDirectory();
-        File file = new File(root, "WaterWorksErrorImg");
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        FileOutputStream fos = null;
-        String imgName = System.currentTimeMillis() + ".jpg";
-        File imgFile = new File(file, imgName);
-        try {
-            fos = new FileOutputStream(imgFile);
-            bm.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        imgUrls.add(imgFile.getAbsolutePath());
-    }
+
+//    public void setPathToSet(Bitmap bm) {
+//        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+//            Toast.makeText(EquipmentInformationActivity.this, "SD卡不能使用", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        File root = Environment.getExternalStorageDirectory();
+//        File file = new File(root, "WaterWorksErrorImg");
+//        if (!file.exists()) {
+//            file.mkdir();
+//        }
+//        FileOutputStream fos = null;
+//        String imgName = System.currentTimeMillis() + ".jpg";
+//        File imgFile = new File(file, imgName);
+//        try {
+//            fos = new FileOutputStream(imgFile);
+//            bm.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                fos.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        imgUrls.add(imgFile.getAbsolutePath());
+//    }
 
 
     @Override
@@ -506,10 +518,10 @@ public class EquipmentInformationActivity extends UpperActivity
         if (ifFinsh)
             return;
         dialog.hideDialog();
-        if (!deviceID.equals(deviceID)) {
-            ToastUtils.showToast(this, "请选择相同设备！");
-            finish();
-        }
+//        if (!deviceID.equals(String.valueOf(deviceId))) {
+//            ToastUtils.showToast(this, "请选择相同设备！");
+//            finish();
+//        }
         dialog.setContent("正在获取服务器数据....").showDialog();
         initRecycler();
         getData();

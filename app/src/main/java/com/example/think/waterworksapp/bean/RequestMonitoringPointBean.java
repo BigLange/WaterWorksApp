@@ -10,7 +10,7 @@ public class RequestMonitoringPointBean {
     private ArrayList<Long> nodeIds = new ArrayList<>();
     private ArrayList<Long> kpiCodes = new ArrayList<>();
     private boolean isRealTimeData = true;
-    private long timePeriod = 604800000;
+    private long timePeriod = 1800000;
 
     public ArrayList<Long> getNodeIds() {
         return nodeIds;

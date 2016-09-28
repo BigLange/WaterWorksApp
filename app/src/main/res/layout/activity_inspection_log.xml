@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_inspection_log"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.think.waterworksapp.InspectionLogActivity">
+
+    <com.example.think.waterworksapp.base_view.headView
+        android:id="@+id/inspection_head_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:text="@string/inspection_log_title"/>
+
+    <com.jingchen.pulltorefresh.PullToRefreshLayout
+        android:id="@+id/inspection_pull_to_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <com.jingchen.pulltorefresh.PullableListView
+            android:id="@+id/inspection_pull_to_refresh_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></com.jingchen.pulltorefresh.PullableListView>
+    </com.jingchen.pulltorefresh.PullToRefreshLayout>
+
+</LinearLayout>

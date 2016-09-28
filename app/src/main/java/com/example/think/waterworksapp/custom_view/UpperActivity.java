@@ -1,6 +1,7 @@
 package com.example.think.waterworksapp.custom_view;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -16,6 +17,7 @@ public abstract class UpperActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         ActivityPreservationUtils.setActivity(this);
         initView();
         initEvent();

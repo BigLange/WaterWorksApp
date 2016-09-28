@@ -30,20 +30,20 @@ public class DeviceDomainAdapter extends ArrayAdapter<DeviceDomainBean> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         DeviceDomainBean domain = getItem(position);
-        ViewHodel hodel;
+        ViewHolder holder;
         if (convertView==null){
             convertView = LayoutInflater.from(context).inflate(LAYOUT_ID,parent,false);
-            hodel = new ViewHodel();
-            hodel.title = (TextView)convertView.findViewById(TXT_ID);
-            convertView.setTag(hodel);
+            holder = new ViewHolder();
+            holder.title = (TextView)convertView.findViewById(TXT_ID);
+            convertView.setTag(holder);
         }else{
-            hodel = (ViewHodel)convertView.getTag();
+            holder = (ViewHolder)convertView.getTag();
         }
-        hodel.title.setText(domain.getName());
+        holder.title.setText(domain.getName());
         return convertView;
     }
 
-    private class ViewHodel{
+    private class ViewHolder{
         TextView title;
     }
 }

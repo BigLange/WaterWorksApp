@@ -159,15 +159,18 @@ public class SelectEquipmentActivity extends UpperActivity implements AdapterVie
             EquipmentMsgBean equipmentMsgBean = equipmentMsgData.get(i);
             String deviceDomainPath = equipmentMsgBean.getDomainPath();
             String[] deviceDomainPaths = deviceDomainPath.split("/");
-            String parentPath = deviceDomainPaths[deviceDomainPaths.length-2];
-            ArrayList<EquipmentMsgBean> devices = deviceMap.get(parentPath);
-            if (devices ==null) {
-                devices = new ArrayList();
-                devices.add(equipmentMsgBean);
-                deviceMap.put(parentPath, devices);
-            }else {
-                devices.add(equipmentMsgBean);
-                Log.e("suibianxiediansm",devices.size()+"");
+            Log.e("domainPaths",deviceDomainPaths.toString());
+            if (deviceDomainPaths.length>=5) {
+                String parentPath = deviceDomainPaths[4];
+                ArrayList<EquipmentMsgBean> devices = deviceMap.get(parentPath);
+                if (devices == null) {
+                    devices = new ArrayList();
+                    devices.add(equipmentMsgBean);
+                    deviceMap.put(parentPath, devices);
+                } else {
+                    devices.add(equipmentMsgBean);
+                    Log.e("suibianxiediansm", devices.size() + "");
+                }
             }
         }
         Log.e("equipment",deviceMap.size()+"");

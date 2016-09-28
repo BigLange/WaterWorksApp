@@ -6,30 +6,18 @@ import android.os.Message;
 import android.util.Log;
 
 import com.example.think.waterworksapp.application.MyApplication;
-import com.example.think.waterworksapp.base_intface.GetInspectionItemView;
 import com.example.think.waterworksapp.base_intface.GetMonitoringPointDataView;
 import com.example.think.waterworksapp.base_intface.RequestView;
 import com.example.think.waterworksapp.bean.AcquisitionSensorBean;
 import com.example.think.waterworksapp.bean.AcquisitionSensorDataBean;
-import com.example.think.waterworksapp.bean.InspectionItemBean;
 import com.example.think.waterworksapp.bean.MonitoringPointDataBean;
 import com.example.think.waterworksapp.bean.RequestMonitoringPointBean;
 import com.example.think.waterworksapp.utils.ICallBack;
 import com.example.think.waterworksapp.utils.OkHttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by Think on 2016/8/22.

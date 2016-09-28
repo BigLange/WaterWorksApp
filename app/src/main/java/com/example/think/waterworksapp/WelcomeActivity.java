@@ -60,6 +60,7 @@ public class WelcomeActivity extends Activity implements Callback,DialogManager.
 //                    dialogManager.setDialogOverListener(WelcomeActivity.this);
 //                    dialogManager.showRecordingDialog("网络错误");
                     ToastUtils.showToast(WelcomeActivity.this,"网络错误");
+                    finish();
                     break;
             }
         }

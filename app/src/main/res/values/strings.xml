@@ -48,4 +48,9 @@
     <string name="monitoring_point_data_show_not_data">暂无数据</string>
     <!--monitoring_point_data_show_item-->
 
+    <!--inspection log activity-->
+    <string name="inspection_log_activity_label">巡检记录页面</string>
+    <string name="inspection_log_title">巡检记录</string>
+    <!--inspection log activity-->
+
 </resources>

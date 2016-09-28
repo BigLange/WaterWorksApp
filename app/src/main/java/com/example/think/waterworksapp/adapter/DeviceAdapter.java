@@ -31,20 +31,20 @@ public class DeviceAdapter extends ArrayAdapter<EquipmentMsgBean> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         EquipmentMsgBean equipmentMsgBean = getItem(position);
-        ViewHodel hodel;
+        ViewViewHolder holder;
         if (convertView==null){
             convertView = LayoutInflater.from(context).inflate(LAYOUT_ID,parent,false);
-            hodel = new ViewHodel();
-            hodel.title = (TextView)convertView.findViewById(TXT_ID);
-            convertView.setTag(hodel);
+            holder = new ViewViewHolder();
+            holder.title = (TextView)convertView.findViewById(TXT_ID);
+            convertView.setTag(holder);
         }else{
-            hodel = (ViewHodel)convertView.getTag();
+            holder = (ViewViewHolder)convertView.getTag();
         }
-        hodel.title.setText(equipmentMsgBean.getLabel());
+        holder.title.setText(equipmentMsgBean.getLabel());
         return convertView;
     }
 
-    private class ViewHodel{
+    private class ViewViewHolder{
         TextView title;
     }
 }

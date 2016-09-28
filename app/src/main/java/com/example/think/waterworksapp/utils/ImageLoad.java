@@ -36,7 +36,7 @@ public class ImageLoad implements Runnable{
     public enum  Type{
         //两种类型都是自己定义的,第一种是，从头加载起
         //第二种策略是，用户看到那一部分就优先加载那一部分，比如用户一下子滑动到第1200张，那就先从1200那边开始加载。 前面的可以先不加载
-        FIFO,LIFO;
+        FIFO,LIFO
     }
 
     //这里创建一个集合，来保存任务线程，这个集合的作用和handler里面保存massage的massageQueue差不多
