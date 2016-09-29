@@ -310,7 +310,7 @@ public class EquipmentInformationActivity extends UpperActivity
 //                setPathToSet(bm);
                 String imagePath = photographUtils.getCurrentImgPath();
                 if (imagePath.length()>0) {
-                    imgUrls.add(photographUtils.getCurrentImgPath());
+                    imgUrls.add(imagePath);
                 }else {
                     ToastUtils.showToast(this,"获取图片失败");
                 }

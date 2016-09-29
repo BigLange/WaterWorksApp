@@ -31,7 +31,7 @@ public class SelectOperationActivity extends UpperActivity implements AdapterVie
     private GridView operationBtnGrid;
     private ArrayList<SelectOperationBtnBean> data;
     private String[] titles = {"设备巡检","巡检日志","传感检测","智能报警","保安巡检","生产通知","行政通知","浦沅信息","登出"};
-    private int[] icons = {R.drawable.select_operation_inspection_icon,R.drawable.select_operation_puyuan_msg_icon
+    private int[] icons = {R.drawable.select_operation_inspection_icon,R.drawable.select_operation_inspection_log_icon
             ,R.drawable.select_operation_sensing_detection_icon,
             R.drawable.select_operation_warning_icon,R.drawable.select_operation_security_staff_inspection,
             R.drawable.select_operation_notification_icon,R.drawable.select_operation_administrative_notice_icon,
